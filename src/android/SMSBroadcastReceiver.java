@@ -25,6 +25,8 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
     
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d(TAG, "Broadcast received with action: " + intent.getAction());
+        
         if (SmsRetriever.SMS_RETRIEVED_ACTION.equals(intent.getAction())) {
             Bundle extras = intent.getExtras();
             if (extras == null) {
@@ -32,11 +34,15 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
                 return;
             }
             
+            Log.d(TAG, "SMS_RETRIEVED_ACTION received with extras");
+            
             Status smsRetrieverStatus = (Status) extras.get(SmsRetriever.EXTRA_STATUS);
             if (smsRetrieverStatus == null) {
                 Log.w(TAG, "No status in SMS_RETRIEVED_ACTION intent");
                 return;
             }
+            
+            Log.d(TAG, "SMS Retriever Status Code: " + smsRetrieverStatus.getStatusCode());
             
             switch (smsRetrieverStatus.getStatusCode()) {
                 case CommonStatusCodes.SUCCESS:
@@ -60,8 +66,12 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
                     
                 default:
                     Log.e(TAG, "SMS retrieval failed with status: " + smsRetrieverStatus.getStatusCode());
+                    Log.e(TAG, "Status message: " + smsRetrieverStatus.getStatusMessage());
                     break;
             }
+        } else {
+            Log.d(TAG, "Received broadcast with different action: " + intent.getAction());
+        }
         }
     }
 }

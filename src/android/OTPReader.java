@@ -57,6 +57,11 @@ public class OTPReader extends CordovaPlugin {
             return true;
         }
         
+        if ("getDebugInfo".equals(action)) {
+            this.getDebugInfo(callbackContext);
+            return true;
+        }
+        
         return false;
     }
     
@@ -90,6 +95,7 @@ public class OTPReader extends CordovaPlugin {
             public void onSuccess(Void aVoid) {
                 isListening = true;
                 Log.d(TAG, "SMS User Consent started successfully");
+                Log.d(TAG, "Listening for SMS from: " + (senderPhoneNumber != null ? senderPhoneNumber : "any sender"));
                 
                 // Keep the callback for future use
                 PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
@@ -156,6 +162,47 @@ public class OTPReader extends CordovaPlugin {
         } catch (Exception e) {
             Log.e(TAG, "Error getting phone number", e);
             callbackContext.error("Error getting phone number: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Get debug information about the plugin state and environment
+     */
+    private void getDebugInfo(CallbackContext callbackContext) {
+        try {
+            JSONObject debugInfo = new JSONObject();
+            debugInfo.put("isListening", isListening);
+            debugInfo.put("hasReceiver", smsReceiver != null);
+            debugInfo.put("androidVersion", Build.VERSION.SDK_INT);
+            debugInfo.put("androidRelease", Build.VERSION.RELEASE);
+            
+            // Check Google Play Services availability
+            try {
+                Context context = cordova.getActivity();
+                int playServicesStatus = com.google.android.gms.common.GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
+                debugInfo.put("playServicesAvailable", playServicesStatus == com.google.android.gms.common.ConnectionResult.SUCCESS);
+                debugInfo.put("playServicesStatusCode", playServicesStatus);
+            } catch (Exception e) {
+                debugInfo.put("playServicesError", e.getMessage());
+            }
+            
+            // Check permissions
+            try {
+                String[] permissions = {"android.permission.RECEIVE_SMS", "android.permission.READ_PHONE_STATE"};
+                JSONObject permissionStatus = new JSONObject();
+                for (String permission : permissions) {
+                    boolean granted = cordova.hasPermission(permission);
+                    permissionStatus.put(permission, granted);
+                }
+                debugInfo.put("permissions", permissionStatus);
+            } catch (Exception e) {
+                debugInfo.put("permissionError", e.getMessage());
+            }
+            
+            callbackContext.success(debugInfo);
+        } catch (Exception e) {
+            Log.e(TAG, "Error getting debug info", e);
+            callbackContext.error("Error getting debug info: " + e.getMessage());
         }
     }
     

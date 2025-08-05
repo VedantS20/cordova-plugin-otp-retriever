@@ -78,6 +78,10 @@
         
         <div id="status">Waiting for device ready...</div>
         
+        <h3>Debug & Diagnostics</h3>
+        <button id="getDebugInfo" disabled>Get Debug Info</button>
+        <button id="testOTPExtraction">Test OTP Extraction</button>
+        
         <h3>Basic Functions</h3>
         <button id="startListening" disabled>Start Listening for OTP</button>
         <button id="stopListening" disabled>Stop Listening</button>
@@ -117,6 +121,7 @@
         function enableButtons() {
             document.getElementById('startListening').disabled = false;
             document.getElementById('getPhoneNumber').disabled = false;
+            document.getElementById('getDebugInfo').disabled = false;
             document.getElementById('startWithSender').disabled = false;
         }
         
@@ -173,6 +178,19 @@
                 },
                 function(error) {
                     addResult('Stop error: ' + error, 'error');
+                }
+            );
+        });
+        
+        document.getElementById('getDebugInfo').addEventListener('click', function() {
+            addResult('Getting debug information...');
+            
+            cordova.plugins.OTPReader.getDebugInfo(
+                function(debugInfo) {
+                    addResult('Debug Info: ' + JSON.stringify(debugInfo, null, 2), 'success');
+                },
+                function(error) {
+                    addResult('Debug info error: ' + error, 'error');
                 }
             );
         });

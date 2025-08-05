@@ -42,6 +42,15 @@ var OTPReader = {
     },
     
     /**
+     * Get debug information about the plugin state
+     * @param {function} successCallback - Success callback function
+     * @param {function} errorCallback - Error callback function
+     */
+    getDebugInfo: function(successCallback, errorCallback) {
+        exec(successCallback, errorCallback, 'OTPReader', 'getDebugInfo', []);
+    },
+    
+    /**
      * Extract OTP from SMS message text
      * @param {string} message - SMS message text
      * @param {number} otpLength - Expected OTP length (default: 6)
