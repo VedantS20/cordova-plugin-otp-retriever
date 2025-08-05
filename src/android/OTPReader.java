@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.telephony.TelephonyManager;
@@ -73,7 +74,13 @@ public class OTPReader extends CordovaPlugin {
         // Register broadcast receiver
         smsReceiver = new SMSBroadcastReceiver(this);
         IntentFilter intentFilter = new IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION);
-        cordova.getActivity().registerReceiver(smsReceiver, intentFilter, SmsRetriever.SEND_PERMISSION, null);
+        
+        // Handle Android 13+ (API 33) receiver export requirements
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            cordova.getActivity().registerReceiver(smsReceiver, intentFilter, SmsRetriever.SEND_PERMISSION, null, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            cordova.getActivity().registerReceiver(smsReceiver, intentFilter, SmsRetriever.SEND_PERMISSION, null);
+        }
         
         // Start SMS User Consent
         Task<Void> task = SmsRetriever.getClient(cordova.getActivity()).startSmsUserConsent(senderPhoneNumber);
