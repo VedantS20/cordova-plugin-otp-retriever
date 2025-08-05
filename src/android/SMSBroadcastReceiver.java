@@ -72,6 +72,5 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
         } else {
             Log.d(TAG, "Received broadcast with different action: " + intent.getAction());
         }
-        }
     }
 }
