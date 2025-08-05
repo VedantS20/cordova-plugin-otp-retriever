@@ -171,21 +171,21 @@ Template.phoneNumberInput.events({
     template.errorMessage.set('');
   },
   
-  'click #getPhoneHint': function(event, template) {
+  'click #getPhoneNumber': function(event, template) {
     if (!Meteor.isCordova) {
-      template.errorMessage.set('Phone hint only available on mobile devices');
+      template.errorMessage.set('Phone number access only available on mobile devices');
       return;
     }
     
-    // Get phone number hint from device
-    cordova.plugins.OTPReader.getPhoneNumberHint(
+    // Get device phone number
+    cordova.plugins.OTPReader.getPhoneNumber(
       function(phoneNumber) {
-        console.log('Phone number hint:', phoneNumber);
+        console.log('Device phone number:', phoneNumber);
         template.phoneNumber.set(phoneNumber);
       },
       function(error) {
-        console.error('Phone hint error:', error);
-        template.errorMessage.set('Could not get phone number hint');
+        console.error('Phone number error:', error);
+        template.errorMessage.set('Could not get device phone number: ' + error);
       }
     );
   },

@@ -81,7 +81,7 @@
         <h3>Basic Functions</h3>
         <button id="startListening" disabled>Start Listening for OTP</button>
         <button id="stopListening" disabled>Stop Listening</button>
-        <button id="getPhoneHint" disabled>Get Phone Number Hint</button>
+        <button id="getPhoneNumber" disabled>Get Device Phone Number</button>
         
         <h3>Advanced Testing</h3>
         <input type="text" id="senderPhone" placeholder="Sender phone number (optional)">
@@ -116,7 +116,7 @@
         
         function enableButtons() {
             document.getElementById('startListening').disabled = false;
-            document.getElementById('getPhoneHint').disabled = false;
+            document.getElementById('getPhoneNumber').disabled = false;
             document.getElementById('startWithSender').disabled = false;
         }
         
@@ -177,16 +177,16 @@
             );
         });
         
-        document.getElementById('getPhoneHint').addEventListener('click', function() {
-            addResult('Getting phone number hint...');
+        document.getElementById('getPhoneNumber').addEventListener('click', function() {
+            addResult('Getting device phone number...');
             
-            cordova.plugins.OTPReader.getPhoneNumberHint(
+            cordova.plugins.OTPReader.getPhoneNumber(
                 function(phoneNumber) {
-                    addResult('Phone hint: ' + phoneNumber, 'success');
+                    addResult('Device phone number: ' + phoneNumber, 'success');
                     document.getElementById('senderPhone').value = phoneNumber;
                 },
                 function(error) {
-                    addResult('Phone hint error: ' + error, 'error');
+                    addResult('Phone number error: ' + error, 'error');
                 }
             );
         });

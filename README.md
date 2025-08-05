@@ -137,13 +137,13 @@ cordova.plugins.OTPReader.startListening(
 );
 ```
 
-### Get Phone Number Hint
+### Get Phone Number
 
 ```javascript
-// Get user's phone number (requires user interaction)
-cordova.plugins.OTPReader.getPhoneNumberHint(
+// Get device's phone number (if available and permitted)
+cordova.plugins.OTPReader.getPhoneNumber(
   function(phoneNumber) {
-    console.log('User phone number:', phoneNumber);
+    console.log('Device phone number:', phoneNumber);
     document.getElementById('phoneInput').value = phoneNumber;
   },
   function(error) {
@@ -193,9 +193,9 @@ Starts listening for SMS messages containing OTP.
 
 Stops listening for SMS messages.
 
-#### `getPhoneNumberHint(successCallback, errorCallback)`
+#### `getPhoneNumber(successCallback, errorCallback)`
 
-Shows a picker to get the user's phone number.
+Gets the device's phone number if available and permitted.
 
 #### `extractOTP(message, otpLength)`
 

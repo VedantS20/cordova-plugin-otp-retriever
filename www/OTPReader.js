@@ -33,12 +33,12 @@ var OTPReader = {
     },
     
     /**
-     * Get the user's phone number hint (requires user interaction)
+     * Get the device's phone number (if available and permitted)
      * @param {function} successCallback - Success callback function
      * @param {function} errorCallback - Error callback function
      */
-    getPhoneNumberHint: function(successCallback, errorCallback) {
-        exec(successCallback, errorCallback, 'OTPReader', 'getPhoneNumberHint', []);
+    getPhoneNumber: function(successCallback, errorCallback) {
+        exec(successCallback, errorCallback, 'OTPReader', 'getPhoneNumber', []);
     },
     
     /**

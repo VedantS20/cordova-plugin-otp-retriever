@@ -119,17 +119,16 @@ cp examples/otp-styles.css client/
 
 **Expected Result**: Timeout callback should be triggered after 5 minutes.
 
-### Test Case 6: Phone Number Hint
+### Test Case 6: Phone Number Access
 
-**Objective**: Test phone number hint picker functionality.
+**Objective**: Test device phone number access functionality.
 
 **Steps**:
-1. Call `getPhoneNumberHint()` method
-2. Verify phone number picker appears
-3. Select a phone number
-4. Check that the selected number is returned
+1. Call `getPhoneNumber()` method
+2. Check if phone number is returned
+3. Verify proper error handling if not available
 
-**Expected Result**: Selected phone number should be returned in success callback.
+**Expected Result**: Device phone number should be returned if available and permitted.
 
 ### Test Case 7: Multiple OTP Sessions
 
@@ -185,16 +184,16 @@ if (Meteor.isDevelopment) {
       );
     },
     
-    // Test phone hint
-    testPhoneHint: function() {
-      console.log('Testing phone hint...');
+    // Test phone number access
+    testPhoneNumber: function() {
+      console.log('Testing phone number access...');
       
-      cordova.plugins.OTPReader.getPhoneNumberHint(
+      cordova.plugins.OTPReader.getPhoneNumber(
         function(phoneNumber) {
-          console.log('✅ Phone hint:', phoneNumber);
+          console.log('✅ Device phone number:', phoneNumber);
         },
         function(error) {
-          console.error('❌ Phone hint error:', error);
+          console.error('❌ Phone number error:', error);
         }
       );
     },
@@ -231,7 +230,7 @@ if (Meteor.isDevelopment) {
   // Make it available globally
   console.log('OTP Reader test functions available:');
   console.log('- testOTPReader.testBasicOTP()');
-  console.log('- testOTPReader.testPhoneHint()');
+  console.log('- testOTPReader.testPhoneNumber()');
   console.log('- testOTPReader.testOTPExtraction()');
   console.log('- testOTPReader.stopListening()');
 }

@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.telephony.TelephonyManager;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
@@ -16,10 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.android.gms.auth.api.credentials.Credential;
-import com.google.android.gms.auth.api.credentials.Credentials;
-import com.google.android.gms.auth.api.credentials.CredentialsClient;
-import com.google.android.gms.auth.api.credentials.HintRequest;
 import com.google.android.gms.auth.api.phone.SmsRetriever;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Status;
@@ -34,11 +31,9 @@ import com.google.android.gms.tasks.Task;
 public class OTPReader extends CordovaPlugin {
     
     private static final String TAG = "OTPReader";
-    private static final int CREDENTIAL_PICKER_REQUEST = 1;
     private static final int SMS_CONSENT_REQUEST = 2;
     
     private CallbackContext otpCallbackContext;
-    private CallbackContext phoneNumberCallbackContext;
     private SMSBroadcastReceiver smsReceiver;
     private boolean isListening = false;
     
@@ -56,8 +51,8 @@ public class OTPReader extends CordovaPlugin {
             return true;
         }
         
-        if ("getPhoneNumberHint".equals(action)) {
-            this.getPhoneNumberHint(callbackContext);
+        if ("getPhoneNumber".equals(action)) {
+            this.getPhoneNumber(callbackContext);
             return true;
         }
         
@@ -130,23 +125,30 @@ public class OTPReader extends CordovaPlugin {
     }
     
     /**
-     * Get phone number hint from user
+     * Get phone number from device (if available and permitted)
      */
-    private void getPhoneNumberHint(CallbackContext callbackContext) {
-        this.phoneNumberCallbackContext = callbackContext;
-        
-        HintRequest hintRequest = new HintRequest.Builder()
-                .setPhoneNumberIdentifierSupported(true)
-                .build();
-                
-        CredentialsClient credentialsClient = Credentials.getClient(cordova.getActivity());
-        Intent intent = credentialsClient.getHintPickerIntent(hintRequest);
-        
+    private void getPhoneNumber(CallbackContext callbackContext) {
         try {
-            cordova.startActivityForResult(this, intent, CREDENTIAL_PICKER_REQUEST);
+            TelephonyManager telephonyManager = (TelephonyManager) cordova.getActivity().getSystemService(Context.TELEPHONY_SERVICE);
+            
+            if (telephonyManager != null) {
+                // Note: This requires READ_PHONE_STATE permission and may not work on all devices/carriers
+                String phoneNumber = telephonyManager.getLine1Number();
+                
+                if (phoneNumber != null && !phoneNumber.isEmpty()) {
+                    callbackContext.success(phoneNumber);
+                } else {
+                    callbackContext.error("Phone number not available from device");
+                }
+            } else {
+                callbackContext.error("TelephonyManager not available");
+            }
+        } catch (SecurityException e) {
+            Log.e(TAG, "Permission denied for reading phone number", e);
+            callbackContext.error("Permission denied to read phone number");
         } catch (Exception e) {
-            Log.e(TAG, "Error starting phone number hint picker", e);
-            callbackContext.error("Error getting phone number hint: " + e.getMessage());
+            Log.e(TAG, "Error getting phone number", e);
+            callbackContext.error("Error getting phone number: " + e.getMessage());
         }
     }
     
@@ -171,36 +173,9 @@ public class OTPReader extends CordovaPlugin {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         
-        switch (requestCode) {
-            case CREDENTIAL_PICKER_REQUEST:
-                handlePhoneNumberResult(resultCode, data);
-                break;
-                
-            case SMS_CONSENT_REQUEST:
-                handleSMSConsentResult(resultCode, data);
-                break;
+        if (requestCode == SMS_CONSENT_REQUEST) {
+            handleSMSConsentResult(resultCode, data);
         }
-    }
-    
-    /**
-     * Handle phone number picker result
-     */
-    private void handlePhoneNumberResult(int resultCode, Intent data) {
-        if (phoneNumberCallbackContext == null) return;
-        
-        if (resultCode == Activity.RESULT_OK && data != null) {
-            Credential credential = data.getParcelableExtra(Credential.EXTRA_KEY);
-            if (credential != null) {
-                String phoneNumber = credential.getId();
-                phoneNumberCallbackContext.success(phoneNumber);
-            } else {
-                phoneNumberCallbackContext.error("No phone number selected");
-            }
-        } else {
-            phoneNumberCallbackContext.error("Phone number selection cancelled");
-        }
-        
-        phoneNumberCallbackContext = null;
     }
     
     /**
@@ -281,6 +256,5 @@ public class OTPReader extends CordovaPlugin {
         }
         isListening = false;
         otpCallbackContext = null;
-        phoneNumberCallbackContext = null;
     }
 }
