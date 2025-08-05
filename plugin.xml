@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="cordova-plugin-otp-reader"
+    version="1.0.0">
+
+    <name>OTP Reader</name>
+    <description>Cordova plugin for automatic OTP reading using Android SMS User Consent API</description>
+    <license>MIT</license>
+    <keywords>cordova,phonegap,otp,sms,verification,android</keywords>
+    <repo>https://github.com/your-username/cordova-plugin-otp-reader.git</repo>
+
+    <engines>
+        <engine name="cordova" version=">=7.0.0" />
+        <engine name="cordova-android" version=">=8.0.0" />
+    </engines>
+
+    <!-- JavaScript interface -->
+    <js-module src="www/OTPReader.js" name="OTPReader">
+        <clobbers target="cordova.plugins.OTPReader" />
+    </js-module>
+
+    <!-- Android platform -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="OTPReader">
+                <param name="android-package" value="com.fasal.otpreader.OTPReader" />
+            </feature>
+        </config-file>
+
+        <!-- Add required permissions -->
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.RECEIVE_SMS" />
+            <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+        </config-file>
+
+        <!-- Register the broadcast receiver -->
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <receiver android:name="com.fasal.otpreader.SMSBroadcastReceiver"
+                android:exported="false">
+                <intent-filter android:priority="500">
+                    <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
+                </intent-filter>
+            </receiver>
+        </config-file>
+
+        <!-- Source files -->
+        <source-file src="src/android/OTPReader.java" target-dir="src/com/fasal/otpreader" />
+        <source-file src="src/android/SMSBroadcastReceiver.java" target-dir="src/com/fasal/otpreader" />
+
+        <!-- Add Google Play Services dependencies -->
+        <framework src="src/android/build.gradle" custom="true" type="gradleReference" />
+    </platform>
+</plugin>

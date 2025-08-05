@@ -1,0 +1,230 @@
+/* OTP Verification Styles */
+
+.otp-verification-container,
+.phone-input-container {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.header h2 {
+  color: #333;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.header p {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.otp-input-section,
+.phone-input-section {
+  margin-bottom: 1.5rem;
+}
+
+.otp-input,
+.phone-input {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.2rem;
+  text-align: center;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  letter-spacing: 0.5em;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.phone-input {
+  letter-spacing: normal;
+  text-align: left;
+}
+
+.otp-input:focus,
+.phone-input:focus {
+  outline: none;
+  border-color: #007AFF;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.auto-fill-btn,
+.hint-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  color: #495057;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.auto-fill-btn:hover,
+.hint-btn:hover {
+  background: #e9ecef;
+  border-color: #adb5bd;
+}
+
+.auto-fill-btn:active,
+.hint-btn:active {
+  transform: translateY(1px);
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.verify-btn,
+.send-btn {
+  width: 100%;
+  padding: 1rem;
+  background: #007AFF;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.verify-btn:hover,
+.send-btn:hover {
+  background: #0056CC;
+}
+
+.verify-btn:disabled,
+.send-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.resend-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: transparent;
+  color: #007AFF;
+  border: 1px solid #007AFF;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.resend-btn:hover {
+  background: #007AFF;
+  color: white;
+}
+
+.error-message {
+  background: #fee;
+  color: #c33;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 1px solid #fcc;
+}
+
+.listening-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #e7f3ff;
+  color: #0066cc;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  border: 1px solid #b3d9ff;
+}
+
+.stop-listening {
+  background: #ff4444;
+  color: white;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.stop-listening:hover {
+  background: #cc0000;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 480px) {
+  .otp-verification-container,
+  .phone-input-container {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .header h2 {
+    font-size: 1.3rem;
+  }
+  
+  .otp-input,
+  .phone-input {
+    font-size: 1.1rem;
+    padding: 0.875rem;
+  }
+}
+
+/* Animation for successful OTP entry */
+@keyframes success-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.otp-input.success {
+  border-color: #28a745;
+  animation: success-pulse 0.6s ease;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #007AFF;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Success message */
+.success-message {
+  background: #d4edda;
+  color: #155724;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 1px solid #c3e6cb;
+  margin-bottom: 1rem;
+}

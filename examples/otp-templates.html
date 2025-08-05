@@ -1,0 +1,89 @@
+<template name="otpVerification">
+  <div class="otp-verification-container">
+    <div class="header">
+      <h2>Enter Verification Code</h2>
+      <p>We've sent a verification code to {{phoneNumber}}</p>
+    </div>
+
+    <div class="otp-input-section">
+      <input 
+        type="tel" 
+        id="otpInput" 
+        class="otp-input" 
+        placeholder="Enter 6-digit code"
+        maxlength="6"
+        value="{{otpCode}}"
+      />
+      
+      {{#if Meteor.isCordova}}
+        <button class="auto-fill-btn" id="autoFillOTP">
+          📱 Auto-fill from SMS
+        </button>
+      {{/if}}
+    </div>
+
+    <div class="action-buttons">
+      <button class="verify-btn" id="verifyOTP" disabled="{{isVerifying}}">
+        {{#if isVerifying}}
+          Verifying...
+        {{else}}
+          Verify Code
+        {{/if}}
+      </button>
+      
+      <button class="resend-btn" id="resendOTP">
+        Resend Code
+      </button>
+    </div>
+
+    {{#if errorMessage}}
+      <div class="error-message">{{errorMessage}}</div>
+    {{/if}}
+
+    {{#if isListening}}
+      <div class="listening-indicator">
+        🎧 Listening for SMS...
+        <button class="stop-listening" id="stopListening">Stop</button>
+      </div>
+    {{/if}}
+  </div>
+</template>
+
+<template name="phoneNumberInput">
+  <div class="phone-input-container">
+    <div class="header">
+      <h2>Enter Your Phone Number</h2>
+      <p>We'll send you a verification code</p>
+    </div>
+
+    <div class="phone-input-section">
+      <input 
+        type="tel" 
+        id="phoneInput" 
+        class="phone-input" 
+        placeholder="+1 (555) 123-4567"
+        value="{{phoneNumber}}"
+      />
+      
+      {{#if Meteor.isCordova}}
+        <button class="hint-btn" id="getPhoneHint">
+          📋 Use saved number
+        </button>
+      {{/if}}
+    </div>
+
+    <div class="action-buttons">
+      <button class="send-btn" id="sendOTP" disabled="{{isSending}}">
+        {{#if isSending}}
+          Sending...
+        {{else}}
+          Send Code
+        {{/if}}
+      </button>
+    </div>
+
+    {{#if errorMessage}}
+      <div class="error-message">{{errorMessage}}</div>
+    {{/if}}
+  </div>
+</template>

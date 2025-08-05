@@ -1,0 +1,37 @@
+{
+  "name": "cordova-plugin-otp-reader",
+  "version": "1.0.0",
+  "description": "Cordova plugin for automatic OTP reading using Android SMS User Consent API",
+  "cordova": {
+    "id": "cordova-plugin-otp-reader",
+    "platforms": [
+      "android"
+    ]
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "ecosystem:phonegap",
+    "cordova-android",
+    "otp",
+    "sms",
+    "verification",
+    "android"
+  ],
+  "engines": {
+    "cordovaDependencies": {
+      "7.0.0": {
+        "cordova-android": ">=8.0.0"
+      }
+    }
+  },
+  "author": "Fasal Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/cordova-plugin-otp-reader.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/cordova-plugin-otp-reader/issues"
+  },
+  "homepage": "https://github.com/your-username/cordova-plugin-otp-reader#readme"
+}
