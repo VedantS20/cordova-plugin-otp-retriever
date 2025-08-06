@@ -25,7 +25,9 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
     
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d(TAG, "=== SMS BROADCAST RECEIVER TRIGGERED ===");
         Log.d(TAG, "Broadcast received with action: " + intent.getAction());
+        Log.d(TAG, "Intent: " + intent.toString());
         
         if (SmsRetriever.SMS_RETRIEVED_ACTION.equals(intent.getAction())) {
             Bundle extras = intent.getExtras();
@@ -35,6 +37,7 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
             }
             
             Log.d(TAG, "SMS_RETRIEVED_ACTION received with extras");
+            Log.d(TAG, "Extras keys: " + extras.keySet().toString());
             
             Status smsRetrieverStatus = (Status) extras.get(SmsRetriever.EXTRA_STATUS);
             if (smsRetrieverStatus == null) {
@@ -43,14 +46,16 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
             }
             
             Log.d(TAG, "SMS Retriever Status Code: " + smsRetrieverStatus.getStatusCode());
+            Log.d(TAG, "SMS Retriever Status Message: " + smsRetrieverStatus.getStatusMessage());
             
             switch (smsRetrieverStatus.getStatusCode()) {
                 case CommonStatusCodes.SUCCESS:
-                    Log.d(TAG, "SMS retrieval successful");
+                    Log.d(TAG, "=== SMS RETRIEVAL SUCCESSFUL ===");
                     
                     // Get consent intent to show user consent dialog
                     Intent consentIntent = extras.getParcelable(SmsRetriever.EXTRA_CONSENT_INTENT);
                     if (consentIntent != null) {
+                        Log.d(TAG, "Consent intent found, showing user consent dialog");
                         // Start activity to show consent dialog to user
                         // Activity must be started within 5 minutes, otherwise TIMEOUT will occur
                         otpReader.handleSMSConsent(consentIntent);
@@ -60,17 +65,20 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
                     break;
                     
                 case CommonStatusCodes.TIMEOUT:
-                    Log.w(TAG, "SMS retrieval timeout occurred");
+                    Log.w(TAG, "=== SMS RETRIEVAL TIMEOUT ===");
+                    Log.w(TAG, "SMS retrieval timeout occurred - no SMS detected within time limit");
                     otpReader.handleSMSTimeout();
                     break;
                     
                 default:
+                    Log.e(TAG, "=== SMS RETRIEVAL FAILED ===");
                     Log.e(TAG, "SMS retrieval failed with status: " + smsRetrieverStatus.getStatusCode());
                     Log.e(TAG, "Status message: " + smsRetrieverStatus.getStatusMessage());
                     break;
             }
         } else {
             Log.d(TAG, "Received broadcast with different action: " + intent.getAction());
+            Log.d(TAG, "Expected action: " + SmsRetriever.SMS_RETRIEVED_ACTION);
         }
     }
 }

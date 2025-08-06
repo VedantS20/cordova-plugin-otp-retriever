@@ -174,22 +174,27 @@ public class OTPReader extends CordovaPlugin {
         }
         
         // Start SMS User Consent
-        Log.d(TAG, "Starting SMS User Consent with sender: " + (senderPhoneNumber != null ? senderPhoneNumber : "any sender"));
+        Log.d(TAG, "=== STARTING SMS USER CONSENT ===");
+        Log.d(TAG, "Sender phone number parameter: " + (senderPhoneNumber != null ? "'" + senderPhoneNumber + "'" : "null (any sender)"));
+        Log.d(TAG, "NOTE: SMS must be sent AFTER this point to be detected");
+        
         Task<Void> task = SmsRetriever.getClient(cordova.getActivity()).startSmsUserConsent(senderPhoneNumber);
         
         task.addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 isListening = true;
-                Log.d(TAG, "SMS User Consent started successfully");
-                Log.d(TAG, "Listening for SMS from: " + (senderPhoneNumber != null ? senderPhoneNumber : "any sender"));
-                Log.d(TAG, "Make sure to send SMS AFTER this message appears");
+                Log.d(TAG, "=== SMS USER CONSENT STARTED SUCCESSFULLY ===");
+                Log.d(TAG, "Listening for SMS from: " + (senderPhoneNumber != null ? "'" + senderPhoneNumber + "'" : "any sender"));
+                Log.d(TAG, "⚠️  CRITICAL: Send your OTP SMS NOW! SMS sent before this point will NOT be detected");
+                Log.d(TAG, "SMS User Consent will timeout after 5 minutes if no SMS received");
                 
                 // Return immediate success to indicate listening started
                 try {
                     JSONObject result = new JSONObject();
                     result.put("listening", true);
                     result.put("message", "Started listening for SMS. Send OTP now.");
+                    result.put("senderFilter", senderPhoneNumber != null ? senderPhoneNumber : "any");
                     
                     PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, result);
                     pluginResult.setKeepCallback(true);
@@ -204,7 +209,9 @@ public class OTPReader extends CordovaPlugin {
             @Override
             public void onFailure(Exception e) {
                 isListening = false;
+                Log.e(TAG, "=== FAILED TO START SMS USER CONSENT ===");
                 Log.e(TAG, "Failed to start SMS User Consent", e);
+                Log.e(TAG, "Error message: " + e.getMessage());
                 callbackContext.error("Failed to start SMS listening: " + e.getMessage());
             }
         });
