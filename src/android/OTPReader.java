@@ -161,7 +161,7 @@ public class OTPReader extends CordovaPlugin {
             
             // Handle Android 13+ (API 33) receiver export requirements
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                cordova.getActivity().registerReceiver(smsReceiver, intentFilter, SmsRetriever.SEND_PERMISSION, null, Context.RECEIVER_NOT_EXPORTED);
+                cordova.getActivity().registerReceiver(smsReceiver, intentFilter, SmsRetriever.SEND_PERMISSION, null, Context.RECEIVER_EXPORTED);
             } else {
                 cordova.getActivity().registerReceiver(smsReceiver, intentFilter, SmsRetriever.SEND_PERMISSION, null);
             }
