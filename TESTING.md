@@ -22,7 +22,7 @@ cd otp-test-app
 meteor add-platform android
 
 # Install the plugin
-meteor add cordova:cordova-plugin-otp-reader@file://path/to/cordova-plugin-otp-reader
+meteor add cordova:cordova-plugin-otp-retriever@file://path/to/cordova-plugin-otp-retriever
 ```
 
 ### 2. Configure mobile-config.js
@@ -34,7 +34,7 @@ App.info({
   name: 'OTP Test App'
 });
 
-App.addCordovaPlugin('cordova-plugin-otp-reader');
+App.addCordovaPlugin('cordova-plugin-otp-retriever');
 ```
 
 ### 3. Add Test Templates

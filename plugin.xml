@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="cordova-plugin-otp-reader"
+    id="cordova-plugin-otp-retriever"
     version="1.0.0">
 
     <name>OTP Reader</name>
     <description>Cordova plugin for automatic OTP reading using Android SMS User Consent API</description>
     <license>MIT</license>
     <keywords>cordova,phonegap,otp,sms,verification,android</keywords>
-    <repo>https://github.com/VedantS20/cordova-plugin-otp-retriver.git</repo>
+    <repo>https://github.com/VedantS20/cordova-plugin-otp-retriever.git</repo>
 
     <engines>
         <engine name="cordova" version=">=7.0.0" />

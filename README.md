@@ -25,18 +25,18 @@ A Cordova plugin for automatic OTP (One-Time Password) reading using Android's S
 
 ```bash
 # For Cordova apps
-cordova plugin add cordova-plugin-otp-reader
+cordova plugin add cordova-plugin-otp-retriever
 
 # For Meteor mobile apps
-meteor add cordova:cordova-plugin-otp-reader@file://path/to/cordova-plugin-otp-reader
+meteor add cordova:cordova-plugin-otp-retriever@file://path/to/cordova-plugin-otp-retriever
 ```
 
 ### 2. For Meteor apps, add to mobile-config.js:
 
 ```javascript
-App.addCordovaPlugin('cordova-plugin-otp-reader', {
+App.addCordovaPlugin('cordova-plugin-otp-retriever', {
   version: '1.0.0',
-  source: 'https://github.com/your-username/cordova-plugin-otp-reader.git'
+  source: 'https://github.com/your-username/cordova-plugin-otp-retriever.git'
 });
 ```
 
@@ -232,7 +232,7 @@ App.info({
 });
 
 // Add the OTP Reader plugin
-App.addCordovaPlugin('cordova-plugin-otp-reader', {
+App.addCordovaPlugin('cordova-plugin-otp-retriever', {
   version: '1.0.0'
 });
 
@@ -310,7 +310,7 @@ meteor-app/
 ├── server/
 │   └── methods.js
 └── packages/
-    └── cordova-plugin-otp-reader/
+    └── cordova-plugin-otp-retriever/
 ```
 
 ## License
