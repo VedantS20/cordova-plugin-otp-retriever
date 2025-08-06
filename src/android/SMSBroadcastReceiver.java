@@ -1,4 +1,4 @@
-package com.fasal.otpreader;
+package org.apache.cordova.otpreader;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

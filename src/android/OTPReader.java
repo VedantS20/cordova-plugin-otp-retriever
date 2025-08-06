@@ -1,4 +1,4 @@
-package com.fasal.otpreader;
+package org.apache.cordova.otpreader;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;

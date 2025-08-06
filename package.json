@@ -1,9 +1,9 @@
 {
-  "name": "cordova-plugin-otp-reader",
+  "name": "cordova-plugin-otp-retriver",
   "version": "1.0.0",
   "description": "Cordova plugin for automatic OTP reading using Android SMS User Consent API",
   "cordova": {
-    "id": "cordova-plugin-otp-reader",
+    "id": "cordova-plugin-otp-retriver",
     "platforms": [
       "android"
     ]
@@ -24,14 +24,14 @@
       }
     }
   },
-  "author": "Fasal Team",
+  "author": "Vedant Sasane",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/cordova-plugin-otp-reader.git"
+    "url": "https://github.com/VedantS20/cordova-plugin-otp-retriver.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/cordova-plugin-otp-reader/issues"
+    "url": "https://github.com/VedantS20/cordova-plugin-otp-retriver/issues"
   },
-  "homepage": "https://github.com/your-username/cordova-plugin-otp-reader#readme"
+  "homepage": "https://github.com/VedantS20/cordova-plugin-otp-retriver?tab=readme-ov-file#cordova-otp-reader-plugin"
 }

@@ -8,7 +8,7 @@
     <description>Cordova plugin for automatic OTP reading using Android SMS User Consent API</description>
     <license>MIT</license>
     <keywords>cordova,phonegap,otp,sms,verification,android</keywords>
-    <repo>https://github.com/your-username/cordova-plugin-otp-reader.git</repo>
+    <repo>https://github.com/VedantS20/cordova-plugin-otp-retriver.git</repo>
 
     <engines>
         <engine name="cordova" version=">=7.0.0" />
@@ -24,7 +24,7 @@
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="OTPReader">
-                <param name="android-package" value="com.fasal.otpreader.OTPReader" />
+                <param name="android-package" value="org.apache.cordova.otpreader.OTPReader" />
             </feature>
         </config-file>
 
@@ -36,7 +36,7 @@
 
         <!-- Register the broadcast receiver -->
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <receiver android:name="com.fasal.otpreader.SMSBroadcastReceiver"
+            <receiver android:name="org.apache.cordova.otpreader.SMSBroadcastReceiver"
                 android:exported="false">
                 <intent-filter android:priority="500">
                     <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
@@ -45,8 +45,8 @@
         </config-file>
 
         <!-- Source files -->
-        <source-file src="src/android/OTPReader.java" target-dir="src/com/fasal/otpreader" />
-        <source-file src="src/android/SMSBroadcastReceiver.java" target-dir="src/com/fasal/otpreader" />
+        <source-file src="src/android/OTPReader.java" target-dir="src/org/apache/cordova/otpreader" />
+        <source-file src="src/android/SMSBroadcastReceiver.java" target-dir="src/org/apache/cordova/otpreader" />
 
         <!-- Add Google Play Services dependencies -->
         <framework src="src/android/build.gradle" custom="true" type="gradleReference" />
