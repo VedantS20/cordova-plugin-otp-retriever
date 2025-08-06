@@ -6,10 +6,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.telephony.TelephonyManager;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CallbackContext;
@@ -21,6 +24,8 @@ import org.json.JSONObject;
 import com.google.android.gms.auth.api.phone.SmsRetriever;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -33,10 +38,13 @@ public class OTPReader extends CordovaPlugin {
     
     private static final String TAG = "OTPReader";
     private static final int SMS_CONSENT_REQUEST = 2;
+    private static final int PERMISSION_REQUEST_CODE = 1001;
     
     private CallbackContext otpCallbackContext;
+    private CallbackContext permissionCallbackContext;
     private SMSBroadcastReceiver smsReceiver;
     private boolean isListening = false;
+    private String pendingSenderPhoneNumber;
     
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -74,20 +82,99 @@ public class OTPReader extends CordovaPlugin {
             return;
         }
         
+        // Check and request permissions first
+        if (!hasRequiredPermissions()) {
+            this.permissionCallbackContext = callbackContext;
+            this.pendingSenderPhoneNumber = senderPhoneNumber;
+            requestSMSPermissions();
+            return;
+        }
+        
+        this.startListeningWithPermissions(senderPhoneNumber, callbackContext);
+    }
+    
+    /**
+     * Check if we have required permissions
+     */
+    private boolean hasRequiredPermissions() {
+        String[] permissions = {
+            "android.permission.RECEIVE_SMS",
+            "android.permission.READ_PHONE_STATE"
+        };
+        
+        for (String permission : permissions) {
+            if (!cordova.hasPermission(permission)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Request SMS permissions
+     */
+    private void requestSMSPermissions() {
+        String[] permissions = {
+            "android.permission.RECEIVE_SMS",
+            "android.permission.READ_PHONE_STATE"
+        };
+        
+        cordova.requestPermissions(this, PERMISSION_REQUEST_CODE, permissions);
+    }
+    
+    /**
+     * Handle permission request result
+     */
+    @Override
+    public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            boolean allGranted = true;
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allGranted = false;
+                    break;
+                }
+            }
+            
+            if (allGranted && permissionCallbackContext != null) {
+                startListeningWithPermissions(pendingSenderPhoneNumber, permissionCallbackContext);
+            } else if (permissionCallbackContext != null) {
+                permissionCallbackContext.error("SMS permissions denied. Please grant SMS permissions to use OTP auto-reading.");
+            }
+            
+            permissionCallbackContext = null;
+            pendingSenderPhoneNumber = null;
+        }
+    }
+    
+    /**
+     * Start listening with permissions already granted
+     */
+    private void startListeningWithPermissions(String senderPhoneNumber, CallbackContext callbackContext) {
+        
         this.otpCallbackContext = callbackContext;
         
-        // Register broadcast receiver
-        smsReceiver = new SMSBroadcastReceiver(this);
-        IntentFilter intentFilter = new IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION);
-        
-        // Handle Android 13+ (API 33) receiver export requirements
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            cordova.getActivity().registerReceiver(smsReceiver, intentFilter, SmsRetriever.SEND_PERMISSION, null, Context.RECEIVER_NOT_EXPORTED);
-        } else {
-            cordova.getActivity().registerReceiver(smsReceiver, intentFilter, SmsRetriever.SEND_PERMISSION, null);
+        // Register broadcast receiver with better error handling
+        try {
+            smsReceiver = new SMSBroadcastReceiver(this);
+            IntentFilter intentFilter = new IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION);
+            
+            // Handle Android 13+ (API 33) receiver export requirements
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                cordova.getActivity().registerReceiver(smsReceiver, intentFilter, SmsRetriever.SEND_PERMISSION, null, Context.RECEIVER_NOT_EXPORTED);
+            } else {
+                cordova.getActivity().registerReceiver(smsReceiver, intentFilter, SmsRetriever.SEND_PERMISSION, null);
+            }
+            
+            Log.d(TAG, "SMS Broadcast Receiver registered successfully");
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to register SMS receiver", e);
+            callbackContext.error("Failed to register SMS receiver: " + e.getMessage());
+            return;
         }
         
         // Start SMS User Consent
+        Log.d(TAG, "Starting SMS User Consent with sender: " + (senderPhoneNumber != null ? senderPhoneNumber : "any sender"));
         Task<Void> task = SmsRetriever.getClient(cordova.getActivity()).startSmsUserConsent(senderPhoneNumber);
         
         task.addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -96,11 +183,20 @@ public class OTPReader extends CordovaPlugin {
                 isListening = true;
                 Log.d(TAG, "SMS User Consent started successfully");
                 Log.d(TAG, "Listening for SMS from: " + (senderPhoneNumber != null ? senderPhoneNumber : "any sender"));
+                Log.d(TAG, "Make sure to send SMS AFTER this message appears");
                 
-                // Keep the callback for future use
-                PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
-                pluginResult.setKeepCallback(true);
-                callbackContext.sendPluginResult(pluginResult);
+                // Return immediate success to indicate listening started
+                try {
+                    JSONObject result = new JSONObject();
+                    result.put("listening", true);
+                    result.put("message", "Started listening for SMS. Send OTP now.");
+                    
+                    PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, result);
+                    pluginResult.setKeepCallback(true);
+                    callbackContext.sendPluginResult(pluginResult);
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error creating start listening result", e);
+                }
             }
         });
         
@@ -179,8 +275,8 @@ public class OTPReader extends CordovaPlugin {
             // Check Google Play Services availability
             try {
                 Context context = cordova.getActivity();
-                int playServicesStatus = com.google.android.gms.common.GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
-                debugInfo.put("playServicesAvailable", playServicesStatus == com.google.android.gms.common.ConnectionResult.SUCCESS);
+                int playServicesStatus = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
+                debugInfo.put("playServicesAvailable", playServicesStatus == ConnectionResult.SUCCESS);
                 debugInfo.put("playServicesStatusCode", playServicesStatus);
             } catch (Exception e) {
                 debugInfo.put("playServicesError", e.getMessage());
@@ -310,5 +406,7 @@ public class OTPReader extends CordovaPlugin {
         }
         isListening = false;
         otpCallbackContext = null;
+        permissionCallbackContext = null;
+        pendingSenderPhoneNumber = null;
     }
 }
