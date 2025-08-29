@@ -33,6 +33,15 @@
             <uses-permission android:name="android.permission.READ_PHONE_STATE" />
         </config-file>
 
+         <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <receiver android:name="org.apache.cordova.otpreader.SMSBroadcastReceiver"
+                android:exported="false">
+                <intent-filter android:priority="500">
+                    <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
+                </intent-filter>
+            </receiver>
+        </config-file>
+
 
         <!-- Source files -->
         <source-file src="src/android/OTPReader.java" target-dir="src/org/apache/cordova/otpreader" />
