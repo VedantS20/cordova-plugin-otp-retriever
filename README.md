@@ -1,16 +1,31 @@
 # Cordova OTP Reader Plugin
 
-A Cordova plugin for automatic OTP (One-Time Password) reading using Android's SMS User Consent API. This plugin allows your Meteor app to automatically read and fill OTP codes from SMS messages with user consent.
+🏆 **Google Play Store Compliant** - Uses SMS User Consent API for privacy-friendly OTP reading
 
-## Features
+A Cordova plugin for automatic OTP (One-Time Password) reading using Android's SMS User Consent API. This plugin allows your app to automatically read and fill OTP codes from SMS messages **with explicit user consent for each SMS**.
 
-- ✅ Uses latest Android SMS User Consent API (2024)
-- ✅ User consent-based SMS reading (privacy-friendly)
-- ✅ Automatic OTP extraction from SMS messages
-- ✅ Phone number hint picker
-- ✅ Works with any SMS format
-- ✅ No special SMS format required
-- ✅ Meteor app integration ready
+## 🚀 Key Features
+
+- ✅ **Play Store Approved**: Uses SMS User Consent API
+- ✅ **Privacy-First**: User consent required for each SMS message
+- ✅ **No Background Access**: Only reads SMS when app is active and listening
+- ✅ **Automatic OTP Extraction**: Works with any SMS format
+- ✅ **Sender Filtering**: Optional filtering by sender phone number
+- ✅ **Timeout Protection**: Automatically stops after 5 minutes
+
+## 🔒 Privacy & Compliance
+
+### What This Plugin Does:
+- Shows user consent dialog for each SMS
+- Only reads SMS after user approval
+- Extracts OTP from consented SMS
+- No background SMS monitoring
+- No persistent SMS permissions
+
+### Google Play Store Compliant:
+- ✅ **SMS User Consent API** (Google's recommended approach)
+- ✅ **User controls access** to each individual SMS
+- ✅ **Transparent consent flow** with clear dialogs
 
 ## Requirements
 

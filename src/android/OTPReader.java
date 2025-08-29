@@ -41,10 +41,9 @@ public class OTPReader extends CordovaPlugin {
     private static final int PERMISSION_REQUEST_CODE = 1001;
     
     private CallbackContext otpCallbackContext;
-    private CallbackContext permissionCallbackContext;
+    private CallbackContext permissionCallbackContext; // Only for getPhoneNumber permission
     private SMSBroadcastReceiver smsReceiver;
     private boolean isListening = false;
-    private String pendingSenderPhoneNumber;
     
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -82,68 +81,36 @@ public class OTPReader extends CordovaPlugin {
             return;
         }
         
-        // Check and request permissions first
-        if (!hasRequiredPermissions()) {
-            this.permissionCallbackContext = callbackContext;
-            this.pendingSenderPhoneNumber = senderPhoneNumber;
-            requestSMSPermissions();
-            return;
-        }
-        
+        // Start listening directly
         this.startListeningWithPermissions(senderPhoneNumber, callbackContext);
     }
     
     /**
-     * Check if we have required permissions
+     * Check if we have required permissions for getPhoneNumber() only
      */
-    private boolean hasRequiredPermissions() {
-        String[] permissions = {
-            "android.permission.RECEIVE_SMS",
-            "android.permission.READ_PHONE_STATE"
-        };
-        
-        for (String permission : permissions) {
-            if (!cordova.hasPermission(permission)) {
-                return false;
-            }
-        }
-        return true;
+    private boolean hasPhoneStatePermission() {
+        return cordova.hasPermission("android.permission.READ_PHONE_STATE");
     }
     
     /**
-     * Request SMS permissions
-     */
-    private void requestSMSPermissions() {
-        String[] permissions = {
-            "android.permission.RECEIVE_SMS",
-            "android.permission.READ_PHONE_STATE"
-        };
-        
-        cordova.requestPermissions(this, PERMISSION_REQUEST_CODE, permissions);
-    }
-    
-    /**
+     * Start listening for SMS messages with OTP
+     * SMS User Consent API doesn't require dangerous permissions
+     */    /**
      * Handle permission request result
      */
     @Override
     public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            boolean allGranted = true;
-            for (int result : grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED) {
-                    allGranted = false;
-                    break;
-                }
-            }
+        if (requestCode == PERMISSION_REQUEST_CODE && permissionCallbackContext != null) {
+            boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
             
-            if (allGranted && permissionCallbackContext != null) {
-                startListeningWithPermissions(pendingSenderPhoneNumber, permissionCallbackContext);
-            } else if (permissionCallbackContext != null) {
-                permissionCallbackContext.error("SMS permissions denied. Please grant SMS permissions to use OTP auto-reading.");
+            if (granted) {
+                // Execute getPhoneNumber with permission granted
+                executeGetPhoneNumber(permissionCallbackContext);
+            } else {
+                permissionCallbackContext.error("Phone state permission denied. getPhoneNumber() functionality not available.");
             }
             
             permissionCallbackContext = null;
-            pendingSenderPhoneNumber = null;
         }
     }
     
@@ -244,6 +211,23 @@ public class OTPReader extends CordovaPlugin {
      * Get phone number from device (if available and permitted)
      */
     private void getPhoneNumber(CallbackContext callbackContext) {
+        // Check permission for reading phone state
+        if (!hasPhoneStatePermission()) {
+            // Request permission specifically for getPhoneNumber function
+            cordova.requestPermissions(this, PERMISSION_REQUEST_CODE, new String[]{"android.permission.READ_PHONE_STATE"});
+            
+            // Store callback to use after permission result
+            this.permissionCallbackContext = callbackContext;
+            return;
+        }
+        
+        executeGetPhoneNumber(callbackContext);
+    }
+    
+    /**
+     * Execute getting phone number with permission already granted
+     */
+    private void executeGetPhoneNumber(CallbackContext callbackContext) {
         try {
             TelephonyManager telephonyManager = (TelephonyManager) cordova.getActivity().getSystemService(Context.TELEPHONY_SERVICE);
             
@@ -289,14 +273,15 @@ public class OTPReader extends CordovaPlugin {
                 debugInfo.put("playServicesError", e.getMessage());
             }
             
-            // Check permissions
+            // Check permissions - only READ_PHONE_STATE for getPhoneNumber()
             try {
-                String[] permissions = {"android.permission.RECEIVE_SMS", "android.permission.READ_PHONE_STATE"};
+                String[] permissions = {"android.permission.READ_PHONE_STATE"};
                 JSONObject permissionStatus = new JSONObject();
                 for (String permission : permissions) {
                     boolean granted = cordova.hasPermission(permission);
                     permissionStatus.put(permission, granted);
                 }
+                permissionStatus.put("note", "SMS User Consent API doesn't require RECEIVE_SMS permission");
                 debugInfo.put("permissions", permissionStatus);
             } catch (Exception e) {
                 debugInfo.put("permissionError", e.getMessage());
@@ -414,6 +399,5 @@ public class OTPReader extends CordovaPlugin {
         isListening = false;
         otpCallbackContext = null;
         permissionCallbackContext = null;
-        pendingSenderPhoneNumber = null;
     }
 }
