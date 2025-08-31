@@ -29,9 +29,9 @@
         </config-file>
 
         <!-- Only READ_PHONE_STATE is needed for getPhoneNumber() function if used -->
-        <config-file target="AndroidManifest.xml" parent="/manifest">
-            <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-        </config-file>
+                <!-- SMS User Consent API doesn't require any dangerous permissions -->
+        <!-- No permissions needed for OTP reading functionality -->
+        <!-- getPhoneNumber() function removed to avoid any permission requirements -->
 
          <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <receiver android:name="org.apache.cordova.otpreader.SMSBroadcastReceiver"

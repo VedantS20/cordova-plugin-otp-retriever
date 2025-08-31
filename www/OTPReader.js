@@ -33,15 +33,6 @@ var OTPReader = {
     },
     
     /**
-     * Get the device's phone number (if available and permitted)
-     * @param {function} successCallback - Success callback function
-     * @param {function} errorCallback - Error callback function
-     */
-    getPhoneNumber: function(successCallback, errorCallback) {
-        exec(successCallback, errorCallback, 'OTPReader', 'getPhoneNumber', []);
-    },
-    
-    /**
      * Get debug information about the plugin state
      * @param {function} successCallback - Success callback function
      * @param {function} errorCallback - Error callback function
