@@ -1,16 +1,32 @@
 # Cordova OTP Reader Plugin
 
-A Cordova plugin for automatic OTP (One-Time Password) reading using Android's SMS User Consent API. This plugin allows your Meteor app to automatically read and fill OTP codes from SMS messages with user consent.
+🏆 **Google Play Store Compliant** - Uses SMS User Consent API for privacy-friendly OTP reading
 
-## Features
+A Cordova plugin for automatic OTP (One-Time Password) reading using Android's SMS User Consent API. This plugin allows your app to automatically read and fill OTP codes from SMS messages **with explicit user consent for each SMS**.
 
-- ✅ Uses latest Android SMS User Consent API (2024)
-- ✅ User consent-based SMS reading (privacy-friendly)
-- ✅ Automatic OTP extraction from SMS messages
-- ✅ Phone number hint picker
-- ✅ Works with any SMS format
-- ✅ No special SMS format required
-- ✅ Meteor app integration ready
+## 🚀 Key Features
+
+- ✅ **Play Store Approved**: Uses SMS User Consent API
+- ✅ **Privacy-First**: User consent required for each SMS message
+- ✅ **No Background Access**: Only reads SMS when app is active and listening
+- ✅ **Automatic OTP Extraction**: Works with any SMS format
+- ✅ **Sender Filtering**: Optional filtering by sender phone number
+- ✅ **Timeout Protection**: Automatically stops after 5 minutes
+
+## 🔒 Privacy & Compliance
+
+### What This Plugin Does:
+- Shows user consent dialog for each SMS
+- Only reads SMS after user approval
+- Extracts OTP from consented SMS
+- No background SMS monitoring
+- **Zero permissions required**
+
+### Google Play Store Compliant:
+- ✅ **SMS User Consent API** (Google's recommended approach)
+- ✅ **User controls access** to each individual SMS
+- ✅ **Transparent consent flow** with clear dialogs
+- ✅ **Zero permission requests** - best user experience
 
 ## Requirements
 
@@ -137,21 +153,6 @@ cordova.plugins.OTPReader.startListening(
 );
 ```
 
-### Get Phone Number
-
-```javascript
-// Get device's phone number (if available and permitted)
-cordova.plugins.OTPReader.getPhoneNumber(
-  function(phoneNumber) {
-    console.log('Device phone number:', phoneNumber);
-    document.getElementById('phoneInput').value = phoneNumber;
-  },
-  function(error) {
-    console.error('Error getting phone number:', error);
-  }
-);
-```
-
 ### Stop Listening
 
 ```javascript
@@ -192,10 +193,6 @@ Starts listening for SMS messages containing OTP.
 #### `stopListening(successCallback, errorCallback)`
 
 Stops listening for SMS messages.
-
-#### `getPhoneNumber(successCallback, errorCallback)`
-
-Gets the device's phone number if available and permitted.
 
 #### `extractOTP(message, otpLength)`
 
@@ -254,10 +251,11 @@ meteor run android-device --mobile-settings settings.json
 ## How It Works
 
 1. **SMS User Consent API**: Uses Google's official SMS User Consent API for privacy-compliant SMS reading
-2. **User Permission**: Prompts user for permission to read a single SMS message
+2. **User Permission**: Prompts user for permission to read a single SMS message  
 3. **Automatic Detection**: Detects SMS messages containing 4-10 character alphanumeric codes with at least one number
 4. **Message Filtering**: Optionally filters messages by sender phone number
 5. **OTP Extraction**: Provides utility functions to extract OTP from various SMS formats
+6. **Zero Permissions**: No dangerous permissions required in AndroidManifest.xml
 
 ## Privacy & Security
 
@@ -337,6 +335,6 @@ For issues and questions:
 ### 1.0.0
 - Initial release
 - SMS User Consent API integration
-- Phone number hint picker
+- Zero permissions required
 - OTP extraction utilities
 - Meteor app integration examples

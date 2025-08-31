@@ -2,7 +2,7 @@ var exec = require('cordova/exec');
 
 /**
  * OTP Reader Plugin for Cordova
- * Provides automatic OTP reading functionality using Android SMS User Consent API
+ * Uses Android SMS User Consent API for privacy-friendly OTP reading
  */
 var OTPReader = {
     
@@ -30,15 +30,6 @@ var OTPReader = {
      */
     stopListening: function(successCallback, errorCallback) {
         exec(successCallback, errorCallback, 'OTPReader', 'stopListening', []);
-    },
-    
-    /**
-     * Get the device's phone number (if available and permitted)
-     * @param {function} successCallback - Success callback function
-     * @param {function} errorCallback - Error callback function
-     */
-    getPhoneNumber: function(successCallback, errorCallback) {
-        exec(successCallback, errorCallback, 'OTPReader', 'getPhoneNumber', []);
     },
     
     /**

@@ -28,14 +28,12 @@
             </feature>
         </config-file>
 
-        <!-- Add required permissions -->
-        <config-file target="AndroidManifest.xml" parent="/manifest">
-            <uses-permission android:name="android.permission.RECEIVE_SMS" />
-            <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-        </config-file>
+        <!-- Only READ_PHONE_STATE is needed for getPhoneNumber() function if used -->
+                <!-- SMS User Consent API doesn't require any dangerous permissions -->
+        <!-- No permissions needed for OTP reading functionality -->
+        <!-- getPhoneNumber() function removed to avoid any permission requirements -->
 
-        <!-- Register the broadcast receiver -->
-        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <receiver android:name="org.apache.cordova.otpreader.SMSBroadcastReceiver"
                 android:exported="false">
                 <intent-filter android:priority="500">
@@ -43,6 +41,7 @@
                 </intent-filter>
             </receiver>
         </config-file>
+
 
         <!-- Source files -->
         <source-file src="src/android/OTPReader.java" target-dir="src/org/apache/cordova/otpreader" />
