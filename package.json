@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-otp-retriever",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cordova plugin for automatic OTP reading using Android SMS User Consent API",
   "cordova": {
     "id": "cordova-plugin-otp-retriever",
